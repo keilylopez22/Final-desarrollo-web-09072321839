@@ -3,4 +3,3 @@ examen-api/node_modules/.bin
 examen-api/node_modules
 examen-api/.env
 examen-web/.env
-docker-compose.yml

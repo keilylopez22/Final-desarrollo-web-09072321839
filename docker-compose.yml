@@ -1,0 +1,19 @@
+# Levanta la base de datos MySQL del proyecto
+#   docker compose up -d     -> iniciar
+#   docker compose down      -> detener (los datos se conservan)
+#   docker compose down -v   -> detener y BORRAR los datos
+services:
+  db:
+    build: ./database
+    container_name: examen-db
+    environment:
+      MYSQL_ROOT_PASSWORD: admin
+      MYSQL_DATABASE: customers_db
+    ports:
+      - "3307:3306"   # 3307 en tu PC -> 3306 dentro del contenedor (3306 lo usa tu MySQL local)
+    volumes:
+      - examen-db-data:/var/lib/mysql   # los datos sobreviven si se borra el contenedor
+    restart: unless-stopped
+
+volumes:
+  examen-db-data:
