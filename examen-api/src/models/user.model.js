@@ -1,6 +1,8 @@
 import { DataTypes } from 'sequelize';
 import { sequelize } from '../config/db.js';
 
+export const ROLES = ['usuario', 'tecnico'];
+
 export const User = sequelize.define('User', {
     id: {
         type: DataTypes.INTEGER,
@@ -15,6 +17,11 @@ export const User = sequelize.define('User', {
     password_hash: {
         type: DataTypes.STRING(255),
         allowNull: false
+    },
+    role: {
+        type: DataTypes.ENUM(...ROLES),
+        allowNull: false,
+        defaultValue: 'usuario'
     }
 }, {
     tableName: 'users',

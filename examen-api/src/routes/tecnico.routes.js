@@ -18,7 +18,7 @@ const router = Router();
  *     summary: Listar todos los tecnicos
  *     tags: [Tecnicos]
  *     security:
- *       - bearerAuth: []
+ *       - cookieAuth: []
  *     responses:
  *       200:
  *         description: Lista de tecnicos
@@ -40,7 +40,7 @@ router.get('/', getAll);
  *     summary: Obtener un tecnico por id
  *     tags: [Tecnicos]
  *     security:
- *       - bearerAuth: []
+ *       - cookieAuth: []
  *     parameters:
  *       - $ref: '#/components/parameters/TecnicoId'
  *     responses:
@@ -74,7 +74,7 @@ router.get('/:id', validateId, getById);
  *     summary: Crear un tecnico
  *     tags: [Tecnicos]
  *     security:
- *       - bearerAuth: []
+ *       - cookieAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -112,7 +112,7 @@ router.post('/', validateBody, postTecnico);
  *     summary: Actualizar un tecnico
  *     tags: [Tecnicos]
  *     security:
- *       - bearerAuth: []
+ *       - cookieAuth: []
  *     parameters:
  *       - $ref: '#/components/parameters/TecnicoId'
  *     requestBody:
@@ -158,7 +158,7 @@ router.put('/:id', validateId, validateBody, putTecnico);
  *     summary: Eliminar un tecnico
  *     tags: [Tecnicos]
  *     security:
- *       - bearerAuth: []
+ *       - cookieAuth: []
  *     parameters:
  *       - $ref: '#/components/parameters/TecnicoId'
  *     responses:

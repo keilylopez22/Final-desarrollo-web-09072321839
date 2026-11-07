@@ -10,19 +10,19 @@ export const swaggerSpec = swaggerJsdoc({
         info: {
             title: 'Examen API',
             version: '1.0.0',
-            description: 'API CRUD de tecnicos'
+            description: 'API para registrar incidencias tecnicas en un laboratorio. La sesion se maneja con una cookie httpOnly (haz login primero; el navegador envia la cookie automaticamente).'
         },
         servers: [{ url: `http://localhost:${process.env.PORT || 3000}` }],
         components: {
             securitySchemes: {
-                bearerAuth: {
-                    type: 'http',
-                    scheme: 'bearer',
-                    bearerFormat: 'JWT'
+                cookieAuth: {
+                    type: 'apiKey',
+                    in: 'cookie',
+                    name: 'session'
                 }
             },
             schemas: {
-                AuthInput: {
+                LoginInput: {
                     type: 'object',
                     required: ['email', 'password'],
                     properties: {
@@ -30,25 +30,60 @@ export const swaggerSpec = swaggerJsdoc({
                         password: { type: 'string', minLength: 8, example: '12345678' }
                     }
                 },
-                LoginResponse: {
+                RegisterInput: {
                     type: 'object',
+                    required: ['email', 'password'],
                     properties: {
-                        token: { type: 'string', example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...' },
-                        tokentype: { type: 'string', example: 'Bearer' },
-                        expiresIn: { type: 'string', example: '1h' }
+                        email: { type: 'string', format: 'email', example: 'usuario@correo.com' },
+                        password: { type: 'string', minLength: 8, example: '12345678' },
+                        role: { type: 'string', enum: ['usuario', 'tecnico'], default: 'usuario' }
                     }
                 },
                 User: {
                     type: 'object',
                     properties: {
                         id: { type: 'integer', example: 1 },
-                        email: { type: 'string', example: 'usuario@correo.com' }
+                        email: { type: 'string', example: 'usuario@correo.com' },
+                        role: { type: 'string', enum: ['usuario', 'tecnico'], example: 'usuario' }
                     }
                 },
-                AuthMessage: {
+                Equipo: {
                     type: 'object',
                     properties: {
-                        message: { type: 'string' }
+                        id: { type: 'integer', example: 1 },
+                        nombre: { type: 'string', example: 'PC-01' },
+                        ubicacion: { type: 'string', nullable: true, example: 'Laboratorio A' }
+                    }
+                },
+                IncidenciaInput: {
+                    type: 'object',
+                    required: ['equipoId', 'descripcion'],
+                    properties: {
+                        equipoId: { type: 'integer', example: 1 },
+                        descripcion: { type: 'string', maxLength: 1000, example: 'No enciende el monitor' }
+                    }
+                },
+                Incidencia: {
+                    type: 'object',
+                    properties: {
+                        id: { type: 'integer', example: 1 },
+                        descripcion: { type: 'string', example: 'No enciende el monitor' },
+                        estado: { type: 'string', enum: ['abierta', 'cerrada'] },
+                        equipoId: { type: 'integer', example: 1 },
+                        userId: { type: 'integer', example: 1 },
+                        cerradaPorId: { type: 'integer', nullable: true },
+                        fechaCierre: { type: 'string', format: 'date-time', nullable: true },
+                        createdAt: { type: 'string', format: 'date-time' },
+                        equipo: { $ref: '#/components/schemas/Equipo' },
+                        creador: {
+                            type: 'object',
+                            properties: { id: { type: 'integer' }, email: { type: 'string' } }
+                        },
+                        cerradaPor: {
+                            type: 'object',
+                            nullable: true,
+                            properties: { id: { type: 'integer' }, email: { type: 'string' } }
+                        }
                     }
                 },
                 Tecnico: {
@@ -87,10 +122,10 @@ export const swaggerSpec = swaggerJsdoc({
             },
             responses: {
                 Unauthorized: {
-                    description: 'token no proporcionado, invalido o expirado',
+                    description: 'no hay sesion activa, o la sesion es invalida o expiro',
                     content: {
                         'application/json': {
-                            schema: { $ref: '#/components/schemas/AuthMessage' }
+                            schema: { $ref: '#/components/schemas/Message' }
                         }
                     }
                 }
